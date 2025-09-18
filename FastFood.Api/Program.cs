@@ -123,14 +123,10 @@ builder.Services.AddSwaggerGen(c =>
 
 // Register Services
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderNotificationService, OrderNotificationService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 
-//builder.Services.AddScoped<IDriverLocationService, DriverLocationService>();
-//builder.Services.AddScoped<IImageProcessingService, ImageProcessingService>();
-builder.Services.AddSingleton<IMessageQueueService, RabbitMQService>();
-//builder.Services.AddHostedService<ImageProcessingService>();
 
 // CORS
 builder.Services.AddCors(options =>
@@ -185,11 +181,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<ChatHub>("/chatHub");
 
-
-//app.MapHub<OrderTrackingHub>("/hubs/orderTracking");
-//app.MapHub<RestaurantOrderHub>("/hubs/restaurantOrders");
-//app.MapHub<CustomerSupportHub>("/hubs/support");
-//app.MapHub<DriverLocationHub>("/hubs/driverLocation");
 
 app.Run();
 
