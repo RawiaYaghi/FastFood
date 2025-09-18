@@ -1,7 +1,9 @@
-﻿using FoodFast.Data;
+﻿using FastFood.Common.Enums;
+using FoodFast.Data;
 using FoodFast.Data.Models;
 using FoodFast.DTOs;
 using FoodFast.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -72,8 +74,8 @@ namespace FoodFast.Controllers
         }
 
 
-        [Authorize]
-        [HttpPost("profile")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPut("profile")]
         public async Task<IActionResult> UpdateProfile(UpdateProfileDto model)
         {
             var userId = User.FindFirstValue("uid");
@@ -93,17 +95,19 @@ namespace FoodFast.Controllers
 
 
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = nameof(UserRole.Customer))]
 
         [HttpPost("payment-method")]
-        [Authorize]
+
         public async Task<IActionResult> AddPaymentMethod([FromBody] PaymentMethodDto dto)
         {
             // Encrypt sensitive payment data
             var encryptedCard = _authService.EncryptPaymentData(dto.CardNumber);
 
+
             var paymentMethod = new PaymentMethod
             {
-                UserId = User.FindFirst("UserId").Value,
+                UserId = User.FindFirst("uid").Value,
                 CardLastFour = dto.CardNumber.Substring(dto.CardNumber.Length - 4),
                 CardType = "detect the type",//To-Do DetectCardType(dto.CardNumber),
                 EncryptedData = encryptedCard,

@@ -1,21 +1,21 @@
-﻿namespace FoodFast.Data.Models
+﻿using FastFood.Common.Enums;
+
+namespace FoodFast.Data.Models
 {
     public class Order
     {
         public int Id { get; set; }
         public string CustomerId { get; set; }
         public int RestaurantId { get; set; }
-        public int? DriverId { get; set; }
-        public string Status { get; set; } // Confirmed, Preparing, Ready, PickedUp, Delivered
+        public string? DriverId { get; set; }
+        public OrderStatus Status { get; set; }
         public decimal TotalAmount { get; set; }
         public string DeliveryAddress { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
         public DateTime? EstimatedDelivery { get; set; }
         public DateTime? AcknowledgedAt { get; set; }
         public int? EstimatedPreparationTime { get; set; }
-        public string CustomerName { get; set; }
-        public string DriverName { get; set; }
         public virtual ApplicationUser Customer { get; set; }
         public virtual ApplicationUser Driver { get; set; }
         public virtual Restaurant Restaurant { get; set; }

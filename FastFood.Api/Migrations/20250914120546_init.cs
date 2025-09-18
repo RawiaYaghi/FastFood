@@ -287,18 +287,15 @@ namespace FastFood.Api.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CustomerId = table.Column<string>(type: "text", nullable: false),
                     RestaurantId = table.Column<int>(type: "integer", nullable: false),
-                    DriverId = table.Column<int>(type: "integer", nullable: true),
-                    Status = table.Column<string>(type: "text", nullable: false),
+                    DriverId = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
                     DeliveryAddress = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     EstimatedDelivery = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     AcknowledgedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    EstimatedPreparationTime = table.Column<int>(type: "integer", nullable: true),
-                    CustomerName = table.Column<string>(type: "text", nullable: false),
-                    DriverName = table.Column<string>(type: "text", nullable: false),
-                    DriverId1 = table.Column<string>(type: "text", nullable: false)
+                    EstimatedPreparationTime = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -310,11 +307,10 @@ namespace FastFood.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_DriverId1",
-                        column: x => x.DriverId1,
+                        name: "FK_Orders_AspNetUsers_DriverId",
+                        column: x => x.DriverId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Orders_Restaurants_RestaurantId",
                         column: x => x.RestaurantId,
@@ -354,9 +350,7 @@ namespace FastFood.Api.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     OrderId = table.Column<int>(type: "integer", nullable: false),
                     MenuItemId = table.Column<int>(type: "integer", nullable: false),
-                    ProductName = table.Column<string>(type: "text", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "numeric", nullable: false),
                     SpecialInstructions = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -439,9 +433,9 @@ namespace FastFood.Api.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_DriverId1",
+                name: "IX_Orders_DriverId",
                 table: "Orders",
-                column: "DriverId1");
+                column: "DriverId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_RestaurantId",

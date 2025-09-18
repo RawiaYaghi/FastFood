@@ -19,7 +19,7 @@ namespace FoodFast.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Restaurant> Restaurants { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
-        public DbSet<SupportChat> SupportChats { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<Announcement> Announcements { get; set; }
@@ -53,6 +53,19 @@ namespace FoodFast.Data
 
             modelBuilder.Entity<MenuItem>()
                 .HasIndex(m => m.RestaurantId);
+
+
+
+            modelBuilder.Entity<Conversation>()
+           .HasMany(c => c.Messages)
+           .WithOne()
+           .HasForeignKey(m => m.ConversationId);
+
+            modelBuilder.Entity<ChatMessage>()
+                .HasIndex(m => m.ConversationId);
+
+            modelBuilder.Entity<ChatMessage>()
+                .HasIndex(m => m.Timestamp);
         }
     }
 }

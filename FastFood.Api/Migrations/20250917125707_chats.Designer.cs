@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FastFood.Api.Migrations
 {
     [DbContext(typeof(FoodFastDbContext))]
-    [Migration("20250914071617_init")]
-    partial class init
+    [Migration("20250917125707_chats")]
+    partial class chats
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -152,22 +152,21 @@ namespace FastFood.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ChatId")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("boolean");
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("ConversationId1")
+                        .HasColumnType("integer");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("SupportChatId")
+                    b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Timestamp")
@@ -175,9 +174,53 @@ namespace FastFood.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SupportChatId");
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("ConversationId1");
+
+                    b.HasIndex("SenderId");
+
+                    b.HasIndex("Timestamp");
 
                     b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("FoodFast.Data.Models.Conversation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AgentId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Conversations");
                 });
 
             modelBuilder.Entity("FoodFast.Data.Models.MenuItem", b =>
@@ -239,23 +282,11 @@ namespace FastFood.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("DeliveryAddress")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("DriverId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("DriverId1")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DriverName")
-                        .IsRequired()
+                    b.Property<string>("DriverId")
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("EstimatedDelivery")
@@ -267,9 +298,8 @@ namespace FastFood.Api.Migrations
                     b.Property<int>("RestaurantId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("TotalAmount")
                         .HasPrecision(10, 2)
@@ -282,7 +312,7 @@ namespace FastFood.Api.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("DriverId1");
+                    b.HasIndex("DriverId");
 
                     b.HasIndex("RestaurantId");
 
@@ -305,19 +335,12 @@ namespace FastFood.Api.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
                     b.Property<string>("SpecialInstructions")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -398,53 +421,6 @@ namespace FastFood.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Restaurants");
-                });
-
-            modelBuilder.Entity("FoodFast.Data.Models.SupportChat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AgentId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("AgentId1")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ChatId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ClosedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("CustomerId1")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Issue")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AgentId1");
-
-                    b.HasIndex("CustomerId1");
-
-                    b.ToTable("SupportChats");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -581,9 +557,46 @@ namespace FastFood.Api.Migrations
 
             modelBuilder.Entity("FoodFast.Data.Models.ChatMessage", b =>
                 {
-                    b.HasOne("FoodFast.Data.Models.SupportChat", null)
+                    b.HasOne("FoodFast.Data.Models.Conversation", null)
                         .WithMany("Messages")
-                        .HasForeignKey("SupportChatId");
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FoodFast.Data.Models.Conversation", "Conversation")
+                        .WithMany()
+                        .HasForeignKey("ConversationId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FoodFast.Data.Models.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("FoodFast.Data.Models.Conversation", b =>
+                {
+                    b.HasOne("FoodFast.Data.Models.ApplicationUser", "Agent")
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FoodFast.Data.Models.ApplicationUser", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("FoodFast.Data.Models.MenuItem", b =>
@@ -607,9 +620,7 @@ namespace FastFood.Api.Migrations
 
                     b.HasOne("FoodFast.Data.Models.ApplicationUser", "Driver")
                         .WithMany()
-                        .HasForeignKey("DriverId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DriverId");
 
                     b.HasOne("FoodFast.Data.Models.Restaurant", "Restaurant")
                         .WithMany("Orders")
@@ -652,21 +663,6 @@ namespace FastFood.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FoodFast.Data.Models.SupportChat", b =>
-                {
-                    b.HasOne("FoodFast.Data.Models.ApplicationUser", "Agent")
-                        .WithMany()
-                        .HasForeignKey("AgentId1");
-
-                    b.HasOne("FoodFast.Data.Models.ApplicationUser", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId1");
-
-                    b.Navigation("Agent");
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -725,6 +721,11 @@ namespace FastFood.Api.Migrations
                     b.Navigation("Orders");
                 });
 
+            modelBuilder.Entity("FoodFast.Data.Models.Conversation", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("FoodFast.Data.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
@@ -735,11 +736,6 @@ namespace FastFood.Api.Migrations
                     b.Navigation("MenuItems");
 
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("FoodFast.Data.Models.SupportChat", b =>
-                {
-                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

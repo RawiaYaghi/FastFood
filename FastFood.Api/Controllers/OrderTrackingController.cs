@@ -1,10 +1,13 @@
-﻿using FoodFast.Data;
+﻿using FastFood.Common.Enums;
+using FoodFast.Data;
 using FoodFast.DTOs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using System.Data;
 
 namespace FoodFast.Controllers
 {
@@ -27,8 +30,8 @@ namespace FoodFast.Controllers
         }
 
         [HttpGet("status/{orderId}")]
-        [Authorize]
-        public async Task<IActionResult> GetOrderStatus(int orderId, [FromQuery] string lastStatus = null)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = nameof(UserRole.Customer))]
+        public async Task<IActionResult> GetOrderStatus(int orderId, [FromQuery] OrderStatus lastStatus = 0)
         {
             var timeout = TimeSpan.FromSeconds(30); // Long poll timeout
             var startTime = DateTime.UtcNow;
@@ -50,7 +53,7 @@ namespace FoodFast.Controllers
                         orderId = order.Id,
                         status = order.Status,
                         estimatedDelivery = order.EstimatedDelivery,
-                        driverName = order.DriverName,
+                        driverName = order.Driver?.FirstName,
                         timestamp = DateTime.UtcNow
                     });
                 }
@@ -71,7 +74,7 @@ namespace FoodFast.Controllers
         }
 
         [HttpPost("update-status")]
-        [Authorize(Roles = "Restaurant,Driver")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = nameof(UserRole.Restaurant))]
         public async Task<IActionResult> UpdateOrderStatus([FromBody] UpdateStatusDto dto)
         {
             var order = await _context.Orders.FindAsync(dto.OrderId);
@@ -83,7 +86,7 @@ namespace FoodFast.Controllers
 
             // Store in Redis for real-time updates
             var db = _redis.GetDatabase();
-            await db.StringSetAsync($"order:{dto.OrderId}:status", dto.Status, TimeSpan.FromMinutes(60));
+            await db.StringSetAsync($"order:{dto.OrderId}:status", dto.Status.ToString(), TimeSpan.FromMinutes(60));
 
             await _context.SaveChangesAsync();
 

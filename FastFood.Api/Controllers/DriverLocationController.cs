@@ -1,4 +1,6 @@
-﻿using FoodFast.DTOs;
+﻿using FastFood.Common.Enums;
+using FoodFast.DTOs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +28,9 @@ namespace FoodFast.Controllers
         }
 
         [HttpGet("stream/{orderId}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Roles = nameof(UserRole.Customer))]
+
         public async Task StreamDriverLocation(int orderId)
         {
             Response.Headers.Add("Content-Type", "text/event-stream");
@@ -54,7 +58,8 @@ namespace FoodFast.Controllers
         }
 
         [HttpPost("update")]
-        [Authorize(Roles = "Driver")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Roles = nameof(UserRole.Driver))]
         public async Task<IActionResult> UpdateDriverLocation([FromBody] LocationUpdateDto dto)
         {
             var db = _redis.GetDatabase();

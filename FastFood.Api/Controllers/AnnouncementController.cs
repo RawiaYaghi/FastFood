@@ -1,6 +1,8 @@
-﻿using FoodFast.Data;
+﻿using FastFood.Common.Enums;
+using FoodFast.Data;
 using FoodFast.Data.Models;
 using FoodFast.DTOs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +30,7 @@ namespace FoodFast.Controllers
         }
 
         [HttpPost("broadcast")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = nameof(UserRole.Admin))]
         public async Task<IActionResult> BroadcastAnnouncement([FromBody] AnnouncementDto dto)
         {
             var announcement = new Announcement
